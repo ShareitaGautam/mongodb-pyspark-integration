@@ -1,9 +1,10 @@
 # mongodb-pyspark-integration
+
 MongoDB and PySpark integration project demonstrating data ingestion, querying, and processing using MongoDB Atlas and Spark.
 
-# MongoDB + PySpark Integration
+## MongoDB + PySpark Integration
 
-## Overview
+### Overview
 This project demonstrates:
 - inserting JSON data into MongoDB
 - querying nested fields in MongoDB
@@ -11,11 +12,11 @@ This project demonstrates:
 - filtering nested array data using PySpark
 - writing Spark DataFrames back to MongoDB
 
-## MongoDB Insert
+### MongoDB Insert
 ```javascript
 use youtubeDB
 
-db.youtube.insert({
+db.youtube.insertOne({
   kind: "youtube#searchListResponse",
   etag: "\"m2yskBQFythfE4irbTIeOgYYfBU/PaiEDiVxOyCWelLPuuwa9LKz3Gk\"",
   nextPageToken: "CAUQAA",
@@ -51,8 +52,9 @@ db.youtube.insert({
     }
   ]
 })
+```
 
-## MongoDB Query
+### MongoDB Query
 ```javascript
 db.youtube.find(
   { "items.id.channelId": "UCJowOS1R0FnhipXVqEnYU1A" },
@@ -60,7 +62,7 @@ db.youtube.find(
 )
 ```
 
-## PySpark Read from MongoDB
+### PySpark Read from MongoDB
 ```python
 df = spark.read.format("com.mongodb.spark.sql.DefaultSource") \
 .option("uri", "mongodb+srv://<username>:<password>@cluster/.../youtubeDB.youtube") \
@@ -69,18 +71,18 @@ df = spark.read.format("com.mongodb.spark.sql.DefaultSource") \
 df.show()
 ```
 
-## PySpark Filter
+### PySpark Filter
 ```python
 from pyspark.sql.functions import explode, col
 
 df1 = df.withColumn("item", explode("items"))
 
 df1.filter(
-    col("item.id.channelId") == "UCJowOS1R0FnhipXVqEnYU1A")
-.select("regionCode").show()
+    col("item.id.channelId") == "UCJowOS1R0FnhipXVqEnYU1A"
+).select("regionCode").show()
 ```
 
-## PySpark Write to MongoDB
+### PySpark Write to MongoDB
 ```python
 sales = spark.createDataFrame([
     (1, 100),
@@ -100,5 +102,5 @@ sales.write.format("com.mongodb.spark.sql.DefaultSource") \
 .save()
 ```
 
-## Note
+### Note
 Credentials are removed for security.
